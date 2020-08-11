@@ -26,29 +26,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Example code for the nodes in the example pipeline. This code is meant
-just for illustrating basic Kedro features.
-
-Delete this when you start working on your own Kedro project.
+"""Construction of the master pipeline.
 """
 
-from kedro.pipeline import Pipeline, node
+from typing import Dict
 
-from .nodes import split_data
+from kedro.pipeline import Pipeline
 
 
-def create_pipeline(**kwargs):
-    return Pipeline(
-        [
-            node(
-                split_data,
-                ["tokyo_data", "params:tokyo_test_data_ratio"],
-                dict(
-                    train_x="example_train_x",
-                    train_y="example_train_y",
-                    test_x="example_test_x",
-                    test_y="example_test_y",
-                ),
-            )
-        ]
-    )
+def create_pipelines(**kwargs) -> Dict[str, Pipeline]:
+    """Create the project's pipeline.
+
+    Args:
+        kwargs: Ignore any additional arguments added in the future.
+
+    Returns:
+        A mapping from a pipeline name to a ``Pipeline`` object.
+
+    """
+
+    return {
+        "__default__": Pipeline([]),
+    }

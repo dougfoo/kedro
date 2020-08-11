@@ -1,19 +1,4 @@
-# sbt
-# (may want to keep parts of 'project')
-bin/
-project/
-target/
-build/
-
-# cache
-*.checked
-*.sha1
-*.pom__md5
-*.jar
-**/null/**
-
-# eclipse
-build
+# top - from scala originally 
 .classpath
 .project
 .settings
@@ -26,9 +11,6 @@ build
 *.iws
 .idea
 
-# mac
-.DS_Store
-
 # other?
 .history
 .scala_dependencies
@@ -37,10 +19,3 @@ build
 
 #general
 *.class
-
-
-# specifics
-**/wikipedia.dat
-**/stackoverflow.csv
-**/timeusage.csv
-**/atussum.csv

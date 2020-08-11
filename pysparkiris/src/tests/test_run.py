@@ -26,29 +26,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Example code for the nodes in the example pipeline. This code is meant
-just for illustrating basic Kedro features.
-
-Delete this when you start working on your own Kedro project.
 """
+This module contains an example test.
 
-from kedro.pipeline import Pipeline, node
+Tests should be placed in ``src/tests``, in modules that mirror your
+project's structure, and in files named test_*.py. They are simply functions
+named ``test_*`` which test a unit of logic.
 
-from .nodes import split_data
+To run the tests, run ``kedro test``.
+"""
+from pathlib import Path
+
+import pytest
+
+from pysparkiris.run import ProjectContext
 
 
-def create_pipeline(**kwargs):
-    return Pipeline(
-        [
-            node(
-                split_data,
-                ["tokyo_data", "params:tokyo_test_data_ratio"],
-                dict(
-                    train_x="example_train_x",
-                    train_y="example_train_y",
-                    test_x="example_test_x",
-                    test_y="example_test_y",
-                ),
-            )
-        ]
-    )
+@pytest.fixture
+def project_context():
+    return ProjectContext(str(Path.cwd()))
+
+
+class TestProjectContext:
+    def test_project_name(self, project_context):
+        assert project_context.project_name == "spark_iris"
+
+    def test_project_version(self, project_context):
+        assert project_context.project_version == "0.16.2"

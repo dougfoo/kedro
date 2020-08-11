@@ -35,27 +35,39 @@ from typing import Any, Dict
 
 import pandas as pd
 
-
+# sample data: 1,130001,東京都,,2020-01-24,金,,湖北省武漢市,40代,男性,,,,,,1
 def split_data(data: pd.DataFrame, example_test_data_ratio: float) -> Dict[str, Any]:
-    """Node for splitting the classical Iris data set into training and test
-    sets, each split into features and labels.
-    The split ratio parameter is taken from conf/project/parameters.yml.
-    The data and the parameters will be loaded and provided to your function
-    automatically when the pipeline is executed and it is time to run this node.
-    """
-    data.columns = [
-        "sepal_length",
-        "sepal_width",
-        "petal_length",
-        "petal_width",
-        "target",
-    ]
-    classes = sorted(data["target"].unique())
-    # One-hot encoding for the target variable
-    data = pd.get_dummies(data, columns=["target"], prefix="", prefix_sep="")
+    data.rename(
+        columns={
+            '全国地方公共団体コード':'No',
+            '都道府県名':'Code',
+            '市区町村名':'Prefecture',
+            '公表_年月日':'Date',
+            '曜日':'DoW',
+            '発症_年月日':'OnsetDate',
+            '患者_居住地':'Residence',
+            '患者_年代':'AgeGroup',
+            '患者_性別':'Gender',
+            '患者_属性':'Attribute',
+            '患者_状態':'Status',
+            '患者_症状':'Symptom',
+            '患者_渡航歴の有無フラグ':'TravelFlag',
+            '備考':'Remarks',
+            '退院済フラグ':'Discharged'
+        }, inplace=True)
+
+    # group by counts
+    data = data[['Date','Gender','AgeGroup','Residence','Prefecture']]
+    data = pd.get_dummies(data, columns=["Gender","AgeGroup","Residence"])
+    data = data.groupby('Date').agg('count')
+    target = data["Prefecture"]
+
+    print(data.head())
 
     # Shuffle all the data
-    data = data.sample(frac=1).reset_index(drop=True)
+    data = data.sample(frac=1).reset_index(drop=False)   # why reset index ?
+
+    print(data.head())
 
     # Split to training and testing data
     n = data.shape[0]
@@ -64,10 +76,10 @@ def split_data(data: pd.DataFrame, example_test_data_ratio: float) -> Dict[str, 
     test_data = data.iloc[:n_test, :].reset_index(drop=True)
 
     # Split the data to features and labels
-    train_data_x = training_data.loc[:, "sepal_length":"petal_width"]
-    train_data_y = training_data[classes]
-    test_data_x = test_data.loc[:, "sepal_length":"petal_width"]
-    test_data_y = test_data[classes]
+    train_data_x = training_data.loc[:, "Date":"Residence"]
+    train_data_y = training_data[target]
+    test_data_x = test_data.loc[:, "Date":"Residence"]
+    test_data_y = test_data[target]
 
     # When returning many variables, it is a good practice to give them names:
     return dict(

@@ -25,30 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Example code for the nodes in the example pipeline. This code is meant
-just for illustrating basic Kedro features.
-
-Delete this when you start working on your own Kedro project.
+"""pysparkiris
 """
 
-from kedro.pipeline import Pipeline, node
-
-from .nodes import split_data
-
-
-def create_pipeline(**kwargs):
-    return Pipeline(
-        [
-            node(
-                split_data,
-                ["tokyo_data", "params:tokyo_test_data_ratio"],
-                dict(
-                    train_x="example_train_x",
-                    train_y="example_train_y",
-                    test_x="example_test_x",
-                    test_y="example_test_y",
-                ),
-            )
-        ]
-    )
+__version__ = "0.1"
