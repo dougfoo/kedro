@@ -39,9 +39,9 @@ import pandas as pd
 def split_data(data: pd.DataFrame, example_test_data_ratio: float) -> Dict[str, Any]:
     data.rename(
         columns={
-            '全国地方公共団体コード':'No',
-            '都道府県名':'Code',
-            '市区町村名':'Prefecture',
+            '全国地方公共団体コード':'Code',
+            '都道府県名':'PrefectureCt',
+            '市区町村名':'PrefectureCt2',
             '公表_年月日':'Date',
             '曜日':'DoW',
             '発症_年月日':'OnsetDate',
@@ -57,17 +57,18 @@ def split_data(data: pd.DataFrame, example_test_data_ratio: float) -> Dict[str, 
         }, inplace=True)
 
     # group by counts
-    data = data[['Date','Gender','AgeGroup','Residence','Prefecture']]
+    print(data.head())
+
+    data = data[['Date','Gender','AgeGroup','Residence','PrefectureCt']]
+    print(data.head())
+
     data = pd.get_dummies(data, columns=["Gender","AgeGroup","Residence"])
     data = data.groupby('Date').agg('count')
-    target = data["Prefecture"]
 
-    print(data.head())
+    print(data.tail())
 
     # Shuffle all the data
     data = data.sample(frac=1).reset_index(drop=False)   # why reset index ?
-
-    print(data.head())
 
     # Split to training and testing data
     n = data.shape[0]
@@ -76,10 +77,10 @@ def split_data(data: pd.DataFrame, example_test_data_ratio: float) -> Dict[str, 
     test_data = data.iloc[:n_test, :].reset_index(drop=True)
 
     # Split the data to features and labels
-    train_data_x = training_data.loc[:, "Date":"Residence"]
-    train_data_y = training_data[target]
-    test_data_x = test_data.loc[:, "Date":"Residence"]
-    test_data_y = test_data[target]
+    train_data_x = training_data.drop(columns=['PrefectureCt'])
+    train_data_y = training_data['PrefectureCt']
+    test_data_x = test_data.drop(columns=['PrefectureCt'])
+    test_data_y = test_data['PrefectureCt']
 
     # When returning many variables, it is a good practice to give them names:
     return dict(
