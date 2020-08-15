@@ -1,5 +1,11 @@
 # titanic
 
+## Info
+
+This is the kaggle Titanic prediction challenge.
+Using it to learn Kedro to submit on kaggle.
+
+
 ## Overview
 
 This is your new Kedro project, which was generated using `Kedro 0.16.4` by running:
