@@ -41,8 +41,12 @@ final_test_out:
   filepath: data/03_primary/final_test_out.csv
 
 # datascience data
-regressor:
+model:
   type: pickle.PickleDataSet
-  filepath: data/06_models/regressor.pickle
+  filepath: data/06_models/model.pickle
   versioned: false
   # true caused some path issues on windows
+
+final_submission:
+  type: pandas.CSVDataSet
+  filepath: data/08_reporting/final_submission.csv

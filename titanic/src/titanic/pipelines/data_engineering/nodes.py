@@ -1,25 +1,22 @@
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
+def preprocess(data: pd.DataFrame) -> pd.DataFrame:
+    data = data.fillna(0)   # mostly Cabin NaN kinda meangingless
+    data['Embarked'] = pd.Categorical(data['Embarked'], categories=['0','C','Q','S'])
 
-def preprocess_train(data: pd.DataFrame) -> pd.DataFrame:
-    """Preprocess the data for companies.
-        Args:
-            data: Source data.
-        Returns:
-            Preprocessed data.
-    """
+    data = pd.get_dummies(data, columns=['Sex','Embarked'])
+    data['Name'] = data['Name'].apply(lambda x: len(x))
+    data = data.drop(columns=['Ticket','Cabin'])   # ticket seems meaningless, not sure about Cabin too..
 
-    data["Name"] = data["Name"].apply(lambda x: x.lower())
-    return data
+    scaler = MinMaxScaler()
+    df_scaled = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+    return df_scaled
 
-def preprocess_test(data: pd.DataFrame) -> pd.DataFrame:
-    data["Name"] = data["Name"].str.upper()
-    return data
+def final_train(original: pd.DataFrame, processed: pd.DataFrame, refdata: pd.DataFrame) -> pd.DataFrame:    
+    processed['PassengerId'] = original['PassengerId']   # reset passengerId
+    return processed
 
-def final_train(data: pd.DataFrame, refdata: pd.DataFrame) -> pd.DataFrame:    
-    data["Sex"] = data["Name"].apply(lambda x: 'M' if x == 'Male' else 'F')
-    return data
-
-def final_test(data: pd.DataFrame, refdata: pd.DataFrame) -> pd.DataFrame:    
-    data["Sex"] = data["Name"].apply(lambda x: 'm' if x == 'Male' else 'f')
-    return data
+def final_test(original: pd.DataFrame, processed: pd.DataFrame, refdata: pd.DataFrame) -> pd.DataFrame:    
+    processed['PassengerId'] = original['PassengerId']   # reset passengerId
+    return processed
