@@ -2,9 +2,9 @@ from kedro.pipeline import Pipeline, node
 
 from titanic.pipelines.data_science.nodes import (
     split_data,
-    split_data2,
     train_model,
     train_xgb,
+    train_rf,
     evaluate_model,
     output_guesses,
 )
@@ -23,7 +23,7 @@ def create_pipeline(**kwargs):
             #     outputs="model"
             # ),
             node(
-                func=train_xgb, 
+                func=train_rf, 
                 inputs=["X_train2","y_train2","parameters"], 
                 outputs="model2"
             ),

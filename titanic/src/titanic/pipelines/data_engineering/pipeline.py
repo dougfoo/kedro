@@ -1,7 +1,6 @@
 from kedro.pipeline import node, Pipeline
 from titanic.pipelines.data_engineering.nodes import (
     preprocess,
-    preprocess2,
     final_train,
     final_test,
 )
