@@ -11,13 +11,13 @@ def create_pipeline(**kwargs):
             node(
                 func=preprocess,
                 inputs="titanic_train",
-                outputs="preprocessed_train",
+                outputs=["preprocessed_train","scaler"],
                 name="preprocess_train_name",  # also used by run by name ?
             ),
             node(
                 func=preprocess,
                 inputs="titanic_test",
-                outputs="preprocessed_test",
+                outputs=["preprocessed_test","scaler2"],
                 name="preprocess_test_name",  
             ),
             node(

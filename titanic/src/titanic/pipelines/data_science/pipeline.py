@@ -1,10 +1,12 @@
 from kedro.pipeline import Pipeline, node
+from sklearn.ensemble import GradientBoostingClassifier
 
 from titanic.pipelines.data_science.nodes import (
     split_data,
     train_model,
     train_xgb,
     train_rf,
+    train_gridcv,
     evaluate_model,
     output_guesses,
 )
@@ -15,33 +17,22 @@ def create_pipeline(**kwargs):
             node(
                 func=split_data, 
                 inputs=["final_train_out","parameters"], 
-                outputs=["X_train2", "X_test2", "y_train2", "y_test2"]
+                outputs=["X_train", "X_test", "y_train", "y_test", "features_names"]
             ),
-            # node(
-            #     func=train_model, 
-            #     inputs=["X_train","y_train","parameters"], 
-            #     outputs="model"
-            # ),
             node(
-                func=train_rf, 
-                inputs=["X_train2","y_train2","parameters"], 
-                outputs="model2"
+                func=train_xgb, 
+                inputs=["X_train","y_train","parameters","features_names"], 
+                outputs="model"
             ),
-            # node(
-            #     func=evaluate_model,
-            #     inputs=["model", "X_train", "y_train"],
-            #     outputs=None,
-            #     name="evaluate logreg"
-            # ),
             node(
                 func=evaluate_model,
-                inputs=["model2", "X_train2", "y_train2"],
+                inputs=["model", "X_train", "y_train"],
                 outputs=None,
                 name="evaluate xgb"
             ),
             node(
                 func=output_guesses,
-                inputs=["model2", "final_test_out"],
+                inputs=["model", "final_test_out"],
                 outputs="final_submission",
             ),
             

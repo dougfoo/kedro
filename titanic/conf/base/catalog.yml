@@ -46,11 +46,10 @@ model:
   filepath: data/06_models/model.pickle
   versioned: false
 
-model2:
+scaler:
   type: pickle.PickleDataSet
-  filepath: data/06_models/model2.pickle
+  filepath: data/06_models/scaler.pickle
   versioned: false
-  # true caused some path issues on windows
 
 final_submission:
   type: pandas.CSVDataSet
