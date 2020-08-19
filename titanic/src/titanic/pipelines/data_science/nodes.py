@@ -42,8 +42,8 @@ def output_guesses(model, data: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def train_xgb(X: np.ndarray, y: np.ndarray, parameters: Dict, feature_names: List)  -> GradientBoostingClassifier:
-    paramDict = { 'n_estimators' : [5,  25, 50, 200],
-                  'max_depth' : [4, 8, 10, 20],   }
+    paramDict = { 'n_estimators' : [20, 25, 30, 45,],
+                  'max_depth' : [2, 3, 4, 5],   }
     model = GradientBoostingClassifier()
     print(f'trying GridSearchCV ranges {paramDict}')
     clf = GridSearchCV(estimator=model, param_grid=paramDict, n_jobs=10)

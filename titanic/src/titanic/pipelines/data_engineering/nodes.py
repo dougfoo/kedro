@@ -1,12 +1,13 @@
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn import preprocessing
 
 # onehot and clear NaNs
 def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
     data['Embarked'].fillna(data['Embarked'].mode().item(), inplace = True)
-    data['Age'].fillna(data['Age'].mean().item() , inplace = True)
-    data['Fare'].fillna(data['Fare'].mode().item() , inplace = True)
+    data['Age'].fillna(data[['Pclass','Sex','Age']].groupby(['Sex','Pclass']).transform(np.mean).iloc[:,0], inplace=True)
+    data['Fare'].fillna(data[['Pclass','Sex','Fare']].groupby(['Sex','Pclass']).transform(np.mean).iloc[:,0], inplace=True)
 
     data['Embarked'] = pd.Categorical(data['Embarked'], categories=['C','Q','S'])
     data = pd.get_dummies(data, columns=['Sex','Embarked'])
@@ -27,11 +28,11 @@ def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
     data['Cabin'] = data["Cabin"].apply(getCabin)
 
     data['FamilySize'] = data["SibSp"] + data["Parch"] + 1
-    data['BinnedAge'] = pd.cut(data['Age'], bins=5, labels=[1,2,3,4,5])
+    #data['BinnedAge'] = pd.cut(data['Age'], bins=5, labels=[1,2,3,4,5])
     data['QBinnedAge'] = pd.qcut(data['Age'], q=5, labels=[1,2,3,4,5])
 
-    # data = data.drop(columns=['Ticket','Sex_female','Age','SibSp','Parch'])
-    data = data.drop(columns=['Ticket'])
+    data = data.drop(columns=['Ticket','Sex_female','Age','SibSp','Parch'])
+#    data = data.drop(columns=['Ticket'])
 
     scaler = MinMaxScaler()
     data = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
