@@ -3,7 +3,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 
 from titanic.pipelines.data_science.nodes import (
     split_data,
-    train_model,
+    train_lr,
     train_xgb,
     train_rf,
     train_gridcv,
