@@ -38,11 +38,12 @@ def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
         return val_dict.get(str(value)[0], 0)
     data['Cabin'] = data["Cabin"].apply(getCabin)
     data['FamilySize'] = data["SibSp"] + data["Parch"] + 1
+    data['BinnedFamilySize'] = pd.cut(data['FamilySize'], bins= [0, 3, 5, 8, 16], labels=[1,2,3,4])
     data['BinnedAge'] = pd.cut(data['Age'], bins= [0, 8, 16, 32, 64, 128], labels=[1,2,3,4,5])
     data['QBinnedAge'] = pd.qcut(data['Age'], q=5, labels=[1,2,3,4,5])
     data['FarePerPerson']= data['Fare'] / data['FamilySize']
 
-    data = data.drop(columns=['Ticket','Sex_female','Fare','Age','QBinnedAge','SibSp','Parch','Cabin','Name'])
+    data = data.drop(columns=['Ticket','Sex_female','Fare','Age','QBinnedAge','SibSp','Parch','Cabin','Name', 'FamilySize'])
 #    data = data.drop(columns=['Ticket'])
 
     scaler = MinMaxScaler()
