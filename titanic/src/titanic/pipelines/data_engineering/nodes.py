@@ -4,11 +4,15 @@ from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 from sklearn import preprocessing
 
 # onehot and clear NaNs
-def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
+def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):    
+    data['CabinNull'] = data['Cabin'].isnull()
+    data['AgeNull' ] = data['Age'].isnull()
+    # data['FareNull'] = data['Fare'].isnull()
+    # data['EmbarkedNull'] = data['Embarked'].isnull()
+
     data['Age'].fillna(data[['Pclass','Sex','Age']].groupby(['Sex','Pclass']).transform(np.mean).iloc[:,0], inplace=True)
     data['Fare'].fillna(data[['Pclass','Sex','Fare']].groupby(['Sex','Pclass']).transform(np.mean).iloc[:,0], inplace=True)
 #    data['Embarked'].fillna(data['Embarked'].mode().item(), inplace = True)
-
     data['FamilySize'] = data["SibSp"] + data["Parch"] + 1
     data['BinnedFamilySize'] = pd.cut(data['FamilySize'], bins= [0, 3, 5, 8, 16], labels=[1,2,3,4])
     data['BinnedAge'] = pd.cut(data['Age'], bins= [0, 8, 16, 32, 64, 128], labels=[1,2,3,4,5])
