@@ -34,6 +34,12 @@ def evaluate_model(model, X: np.ndarray, y: np.ndarray):
     logger = logging.getLogger(__name__)
     logger.info(f"Model r2score ___{round(score,4)}___, accuracy ___{round(acc,4)}___")    
 
+    from sklearn.metrics import roc_curve, auc
+    false_positive_rate, true_positive_rate, thresholds = roc_curve(y, y_pred)
+    roc_auc = auc(false_positive_rate, true_positive_rate)
+    logger.info(f"ROC/AUC: {roc_auc}")
+
+
 def output_guesses(model, data: pd.DataFrame) -> pd.DataFrame:
     y_pred = model.predict(data.iloc[:,1:])
     df = data.iloc[:,0:1].copy()
@@ -42,11 +48,15 @@ def output_guesses(model, data: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def train_xgb(X: np.ndarray, y: np.ndarray, parameters: Dict, feature_names: List)  -> GradientBoostingClassifier:
-    paramDict = { 'n_estimators' : [20, 25, 30, 45, 60, 75],
-                  'max_depth' : [2, 3, 4, 5,6],   }
+    paramDict = { 'n_estimators' : [1, 2, 4, 8, 16, 32, 64, 100, 200],
+                  'max_depth' : [2, 3, 4, 5, 6, 10, 18, 30], 
+                  'learning_rate': [1, 0.5, 0.25, 0.1, 0.05, 0.01],
+                  'min_samples_split': [0.1, 0.3, 0.5, 0.7, 0.9],
+                  'min_samples_leaf': [0.1,0.2,0.3,0.4,0.5]
+    }
     model = GradientBoostingClassifier()
     print(f'trying GridSearchCV ranges {paramDict}')
-    clf = GridSearchCV(estimator=model, param_grid=paramDict, n_jobs=10)
+    clf = GridSearchCV(estimator=model, param_grid=paramDict, n_jobs=10, verbose=1)
     clf.fit(X, y)
     print(f'best params: {clf.best_params_}, best score:  {clf.best_score_}')
 
