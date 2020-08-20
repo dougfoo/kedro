@@ -11,9 +11,8 @@ def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
 
     data['Embarked'] = pd.Categorical(data['Embarked'], categories=['C','Q','S'])
     data['Title'] = data['Name'].str.split(', ', expand=True)[1].str.split('.', expand=True)[0]
-    data['Title'] = pd.Categorical(data['Title'], categories=['Mr', 'Mrs', 'Miss', 'Master', 'Don', 'Rev', 'Dr', 'Mme', 'Ms',
-       'Major', 'Lady', 'Sir', 'Mlle', 'Col', 'Capt', 'the Countess',
-       'Jonkheer', 'Dona'])
+    data['Title'] = pd.Categorical(data['Title'], categories=['Mr','Col','Capt', 'Master','Don','Rev','Sir','Dr','Major', 
+        'Mme','Jonkheer','Dona','Ms','Lady', 'Mrs', 'Miss', 'Mlle', 'the Countess'])
 
     lbl= LabelEncoder()
     lbl.fit(list(data['Title'].values)) 
@@ -43,7 +42,7 @@ def preprocess(data: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
     data['QBinnedAge'] = pd.qcut(data['Age'], q=5, labels=[1,2,3,4,5])
     data['FarePerPerson']= data['Fare'] / data['FamilySize']
 
-    data = data.drop(columns=['Ticket','Sex_female','Fare','Age','QBinnedAge','SibSp','Parch','Cabin','Name', 'FamilySize'])
+    data = data.drop(columns=['Ticket','Sex_female','Fare','Age','QBinnedAge','SibSp','Parch','Name','FamilySize'])
 #    data = data.drop(columns=['Ticket'])
 
     scaler = MinMaxScaler()
