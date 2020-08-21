@@ -53,7 +53,7 @@ class ProjectContext(KedroContext):
     ):
         super().__init__(project_path, env, extra_params)
         self.init_spark_session()
-    
+
     def init_spark_session(self) -> None:
         """Initialises a SparkSession using the config defined in project's conf folder."""
 
@@ -63,8 +63,7 @@ class ProjectContext(KedroContext):
 
         # Initialise the spark session
         spark_session_conf = (
-            SparkSession.builder
-            .appName(self.project_name)
+            SparkSession.builder.appName(self.project_name)
             .enableHiveSupport()
             .config(conf=spark_conf)
         )
