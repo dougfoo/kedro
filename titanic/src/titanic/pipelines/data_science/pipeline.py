@@ -5,6 +5,7 @@ from titanic.pipelines.data_science.nodes import (
     split_data,
     train_lr,
     train_xgb,
+    train_dt,
     train_rf,
     train_gridcv,
     evaluate_model,
@@ -20,7 +21,7 @@ def create_pipeline(**kwargs):
                 outputs=["X_train", "X_test", "y_train", "y_test", "features_names"]
             ),
             node(
-                func=train_xgb, 
+                func=train_dt, 
                 inputs=["X_train","y_train","parameters","features_names"], 
                 outputs="model"
             ),

@@ -11,6 +11,7 @@ from sklearn.metrics import r2_score, accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeClassifier
 
 
 def split_data(data: pd.DataFrame, parameters: Dict) -> List:
@@ -50,9 +51,9 @@ def output_guesses(model, data: pd.DataFrame) -> pd.DataFrame:
 def train_xgb(X: np.ndarray, y: np.ndarray, parameters: Dict, feature_names: List)  -> GradientBoostingClassifier:
     paramDict = { 'n_estimators' : [1, 2, 4, 8, 16, 32, 64, 100, 200],
                   'max_depth' : [2, 3, 4, 5, 6, 10, 18, 30], 
-                  'learning_rate': [1, 0.5, 0.25, 0.1, 0.05, 0.01],
-                  'min_samples_split': [0.1, 0.3, 0.5, 0.7, 0.9],
-                  'min_samples_leaf': [0.1,0.2,0.3,0.4,0.5]
+                #   'learning_rate': [1, 0.5, 0.25, 0.1, 0.05, 0.01],
+                #   'min_samples_split': [0.1, 0.3, 0.5, 0.7, 0.9],
+                #   'min_samples_leaf': [0.1,0.2,0.3,0.4,0.5]
     }
     model = GradientBoostingClassifier()
     print(f'trying GridSearchCV ranges {paramDict}')
@@ -61,6 +62,28 @@ def train_xgb(X: np.ndarray, y: np.ndarray, parameters: Dict, feature_names: Lis
     print(f'best params: {clf.best_params_}, best score:  {clf.best_score_}')
 
     model = GradientBoostingClassifier(**clf.best_params_)
+    model.fit(X, y)
+
+    ic = pd.DataFrame([model.feature_importances_], columns=feature_names).T
+    ic.columns=['Rank']
+    print(ic.sort_values(by='Rank', ascending=False))
+
+    return model
+
+def train_dt(X: np.ndarray, y: np.ndarray, parameters: Dict, feature_names: List)  -> DecisionTreeClassifier:
+    paramDict = {
+                "max_depth": range(1, 50),
+                "criterion": ["gini", "entropy"],
+                "splitter": ["best", "random"],
+     }
+    
+    model = DecisionTreeClassifier()
+    print(f'trying GridSearchCV ranges {paramDict}')
+    clf = GridSearchCV(estimator=model, param_grid=paramDict, n_jobs=10, verbose=1)
+    clf.fit(X, y)
+    print(f'best params: {clf.best_params_}, best score:  {clf.best_score_}')
+
+    model = DecisionTreeClassifier(**clf.best_params_)
     model.fit(X, y)
 
     ic = pd.DataFrame([model.feature_importances_], columns=feature_names).T
